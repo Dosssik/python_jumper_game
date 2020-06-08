@@ -1,65 +1,80 @@
 import pygame
 from hero import Hero
 from hero import HeroState
+import random
+from enemy import Enemy
 
 pygame.init()
 screen_width = 800
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
+
+pygame.time.set_timer(pygame.USEREVENT+1, 700)
 clock = pygame.time.Clock()
 game_finished = False
 
 moving_step = 10
 
-x = 100
-y = 100
+hero_height = 150
+hero_width = 150
 
-rect_height = 150
-rect_width = 150
+hero_location_x = screen_width / 2
+hero_location_y = screen_height - hero_height
 
 isInJump = False
-jumpCounter = 10
-hero = Hero(rect_height, rect_width)
+jumpCounter = 20
+hero = Hero(hero_height, hero_width)
+enemies = []
 
 
 def do_jump():
-    global isInJump, jumpCounter, y
-    if jumpCounter >= -10:
+    global isInJump, jumpCounter, hero_location_y
+    if jumpCounter >= -20:
         if jumpCounter < 0:
-            y += (jumpCounter ** 2) / 3
+            hero_location_y += (jumpCounter ** 2) / 9
         else:
-            y -= (jumpCounter ** 2) / 3
+            hero_location_y -= (jumpCounter ** 2) / 9
         jumpCounter -= 1
     else:
         isInJump = False
-        jumpCounter = 10
+        jumpCounter = 20
+
+
+def draw_window():
+    screen.fill((192, 192, 255))
+    for enemy in enemies:
+        enemy.draw(screen)
+    hero.draw(screen, hero_location_x, hero_location_y)
+    pygame.display.update()
+
+
+def createEnemy():
+    enemy = Enemy(screen_width, screen_height)
+    enemies.append(enemy)
 
 
 while not game_finished:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             game_finished = True
+        elif event.type == pygame.USEREVENT+1 and random.randint(0, 100) > 30:
+            createEnemy()
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and x > moving_step:
+    if keys[pygame.K_LEFT] and hero_location_x > moving_step:
         hero.update(HeroState.left)
-        x -= moving_step
-    elif keys[pygame.K_RIGHT] and x < screen_width - rect_width - moving_step:
+        hero_location_x -= moving_step
+    elif keys[pygame.K_RIGHT] and hero_location_x < screen_width - hero_width - moving_step:
         hero.update(HeroState.right)
-        x += moving_step
-    elif isInJump:
+        hero_location_x += moving_step
+
+    if isInJump:
         hero.update(HeroState.jump)
         do_jump()
-    else:
+    elif keys[pygame.K_SPACE]:
+        isInJump = True
+    elif not keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT] and not keys[pygame.K_SPACE]:
         hero.update(HeroState.idle)
-        if keys[pygame.K_DOWN] and y < screen_height - rect_height - moving_step:
-            y += moving_step
-        elif keys[pygame.K_UP] and y > moving_step:
-            y -= moving_step
-        elif keys[pygame.K_SPACE]:
-            isInJump = True
 
-    screen.fill((192, 192, 255))
-    hero.draw(screen, x, y)
-    pygame.display.update()
-    clock.tick(60)
+    draw_window()
+    clock.tick(80)
