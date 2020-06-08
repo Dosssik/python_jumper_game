@@ -15,6 +15,9 @@ y = 100
 rect_height = 50
 rect_width = 50
 
+isInJump = False
+jumpCounter = 10
+
 while not game_finished:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -25,10 +28,23 @@ while not game_finished:
         x -= moving_step
     elif keys[pygame.K_RIGHT] and x < screen_width - rect_width - moving_step:
         x += moving_step
-    elif keys[pygame.K_DOWN] and y < screen_height - rect_height - moving_step:
-        y += moving_step
-    elif keys[pygame.K_UP] and y > moving_step:
-        y -= moving_step
+    elif isInJump:
+        if jumpCounter >= -10:
+            if jumpCounter < 0:
+                y += (jumpCounter ** 2) / 3
+            else:
+                y -= (jumpCounter ** 2) / 3
+            jumpCounter -= 1
+        else:
+            isInJump = False
+            jumpCounter = 10
+    else:
+        if keys[pygame.K_DOWN] and y < screen_height - rect_height - moving_step:
+            y += moving_step
+        elif keys[pygame.K_UP] and y > moving_step:
+            y -= moving_step
+        elif keys[pygame.K_SPACE]:
+            isInJump = True
 
     screen.fill((192, 192, 255))
     rect_background = (100, 100, 100)
