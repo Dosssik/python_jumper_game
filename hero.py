@@ -53,6 +53,7 @@ class Hero:
             pg.transform.scale(pg.image.load('images/Slide (8).png'), (height, width))
         ]
         self.animation_index = 0
+        self.rect = pg.transform.scale(pg.image.load('images/Idle (1).png'), (height, width)).get_rect(x=0, y=0)
 
     def update(self, state):
         self.state = state
@@ -64,11 +65,19 @@ class Hero:
     def draw(self, window, x, y):
         index_ = self.animation_index // 7
         if self.state == HeroState.right:
-            window.blit(self.right_image_array[index_], (x, y))
+            image__ = self.right_image_array[index_]
+            self.rect = image__.get_rect(x=x, y=y)
+            window.blit(image__, (x, y))
         elif self.state == HeroState.left:
-            window.blit(self.left_image_array[index_], (x, y))
+            image__ = self.left_image_array[index_]
+            self.rect = image__.get_rect(x=x, y=y)
+            window.blit(image__, (x, y))
         elif self.state == HeroState.idle:
-            window.blit(self.idle_image_array[index_], (x, y))
+            image__ = self.idle_image_array[index_]
+            self.rect = image__.get_rect(x=x, y=y)
+            window.blit(image__, (x, y))
         elif self.state == HeroState.jump:
-            window.blit(self.jump_image_array[index_], (x, y))
+            image__ = self.jump_image_array[index_]
+            self.rect = image__.get_rect(x=x, y=y)
+            window.blit(image__, (x, y))
 

@@ -60,7 +60,22 @@ def createEnemy():
     enemies.append(enemy)
 
 
+def check_if_hero_is_dead():
+    global game_finished
+    for enemy in enemies:
+        print(hero_location_x)
+        print(enemy.rect.centerx)
+        print(hero_location_x + hero_width)
+        print("")
+        x_collision = hero_location_x <= enemy.rect.centerx <= (hero_location_x + hero_width)
+        y_collision = hero_location_y + hero_height >= enemy.y
+        if x_collision and y_collision:
+            game_finished = True
+
+
 while not game_finished:
+    check_if_hero_is_dead()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             game_finished = True

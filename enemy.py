@@ -8,7 +8,7 @@ class MovingDirection(Enum):
     left = 1
 
 
-enemy_size = 80
+enemy_size = 100
 
 left_to_right_sprites = [
     pg.transform.scale(pg.image.load('images/enemy/Hurt (1).png'), (enemy_size, enemy_size)),
@@ -43,6 +43,7 @@ class Enemy:
         self.velocity = random.randint(2, 5)
         self.y = screen_height - enemy_size
         self.animation_index = 0
+        self.rect = pg.transform.scale(pg.image.load('images/enemy/Hurt (1).png'), (enemy_size, enemy_size)).get_rect(x=self.x, y=self.y)
 
     def draw(self, window):
         if self.animation_index + 1 > 36:
@@ -60,4 +61,6 @@ class Enemy:
             self.x -= self.velocity
         else:
             self.x += self.velocity
-        window.blit(self.sprites[index_], (self.x, self.y))
+        image = self.sprites[index_]
+        self.rect = image.get_rect(x=self.x, y=self.y)
+        window.blit(image, (self.x, self.y))
