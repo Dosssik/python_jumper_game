@@ -3,11 +3,13 @@ from hero import Hero
 from hero import HeroState
 import random
 from enemy import Enemy
+from enemy import enemy_size
 
 pygame.init()
 screen_width = 800
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
+screen_background_image = pygame.image.load("images/game_bg.jpg")
 
 pygame.time.set_timer(pygame.USEREVENT+1, 700)
 clock = pygame.time.Clock()
@@ -24,6 +26,7 @@ hero_location_y = screen_height - hero_height
 isInJump = False
 jumpCounter = 20
 hero = Hero(hero_height, hero_width)
+
 enemies = []
 
 
@@ -41,9 +44,13 @@ def do_jump():
 
 
 def draw_window():
-    screen.fill((192, 192, 255))
+    screen.blit(screen_background_image, (0, 0))
     for enemy in enemies:
-        enemy.draw(screen)
+        if screen_width >= enemy.x >= 0 - enemy_size:
+            enemy.draw(screen)
+        else:
+            enemies.pop(enemies.index(enemy))
+
     hero.draw(screen, hero_location_x, hero_location_y)
     pygame.display.update()
 
